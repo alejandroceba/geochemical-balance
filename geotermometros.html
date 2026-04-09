@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geotermómetros Químicos</title>
+    <!-- Tailwind CSS para estilos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* Animaciones básicas */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        .slide-in-bottom { animation: slideInBottom 0.3s ease-out; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInBottom {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800 font-sans p-4 md:p-8">
+    <div class="max-w-5xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <header class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center shrink-0">
+                    <i data-lucide="thermometer" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-slate-900">Geotermómetros Químicos</h1>
+                    <p class="text-slate-500 mt-1 text-sm md:text-base">
+                        Estimación de temperaturas de yacimientos geotérmicos
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="flex bg-slate-100 p-1 rounded-lg w-full md:w-auto">
+                <button id="tab-theory" class="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all text-slate-600 hover:text-slate-900">
+                    <i data-lucide="book-open" class="w-4 h-4"></i> Teoría
+                </button>
+                <button id="tab-calculator" class="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all bg-white text-slate-900 shadow-sm">
+                    <i data-lucide="calculator" class="w-4 h-4"></i> Calculadora
+                </button>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <main class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden min-h-[500px]">
+            
+            <!-- TAB TEORÍA -->
+            <div id="view-theory" class="hidden p-6 md:p-8 space-y-8 fade-in slide-in-bottom">
+                <section class="space-y-4">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="info" class="text-blue-500 w-6 h-6"></i>
+                        ¿Qué son los Geotermómetros Químicos?
+                    </h2>
+                    <p class="text-slate-600 leading-relaxed">
+                        Los geotermómetros químicos son herramientas analíticas utilizadas en la exploración geotérmica para estimar la temperatura de un yacimiento profundo basándose en la composición química de los fluidos termales que emergen en la superficie (manantiales, pozos). Se fundamentan en la premisa de que reacciones químicas específicas entre el fluido y los minerales de la roca alcanzan un equilibrio químico dependiente de la temperatura en las profundidades.
+                    </p>
+                </section>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Cuarzo -->
+                    <div class="space-y-4 bg-slate-50 p-6 rounded-xl border border-slate-100">
+                        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="droplets" class="text-cyan-500 w-5 h-5"></i>
+                            Geotermómetro de Sílice (Cuarzo)
+                        </h3>
+                        <p class="text-sm text-slate-600">
+                            Se basa en la solubilidad del cuarzo, la cual aumenta al incrementar la temperatura. Es muy útil para yacimientos con temperaturas entre 150 °C y 225 °C. Existen dos escenarios principales dependiendo de cómo asciende el fluido:
+                        </p>
+                        <div class="space-y-4 mt-4">
+                            <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Sin pérdida de vapor (Enfriamiento Conductivo)</p>
+                                <p class="text-sm text-slate-700 italic">Asume que el fluido se enfría por conducción al subir, sin hervir.</p>
+                                <div class="mt-2 text-center bg-slate-50 p-2 rounded text-slate-800 font-mono text-sm border border-slate-100">
+                                    T(°C) = 1309 / (5.19 - log₁₀[SiO₂]) - 273.15
+                                </div>
+                                <p class="text-xs text-right mt-1 text-slate-400">Fournier (1977)</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Máxima pérdida de vapor (Enfriamiento Adiabático)</p>
+                                <p class="text-sm text-slate-700 italic">Asume que el fluido hierve y pierde vapor al ascender rápidamente (flashing).</p>
+                                <div class="mt-2 text-center bg-slate-50 p-2 rounded text-slate-800 font-mono text-sm border border-slate-100">
+                                    T(°C) = 1522 / (5.75 - log₁₀[SiO₂]) - 273.15
+                                </div>
+                                <p class="text-xs text-right mt-1 text-slate-400">Fournier (1977)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Na/K -->
+                    <div class="space-y-4 bg-slate-50 p-6 rounded-xl border border-slate-100">
+                        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="flame" class="text-orange-500 w-5 h-5"></i>
+                            Geotermómetro Na/K
+                        </h3>
+                        <p class="text-sm text-slate-600">
+                            Se basa en el intercambio iónico de Sodio (Na) y Potasio (K) entre feldespatos alcalinos. Es de re-equilibrio lento, por lo que guarda "memoria" de las temperaturas más profundas. Excelente para yacimientos de alta temperatura &gt; 180 °C.
+                        </p>
+                        <div class="space-y-4 mt-4">
+                            <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Ecuación de Fournier</p>
+                                <p class="text-sm text-slate-700 italic">Muy utilizada empíricamente a nivel global.</p>
+                                <div class="mt-2 text-center bg-slate-50 p-2 rounded text-slate-800 font-mono text-sm border border-slate-100">
+                                    T(°C) = 1217 / (log₁₀(Na/K) + 1.483) - 273.15
+                                </div>
+                                <p class="text-xs text-right mt-1 text-slate-400">Fournier (1979)</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Ecuación de Giggenbach</p>
+                                <p class="text-sm text-slate-700 italic">Basada en principios de equilibrio termodinámico de minerales.</p>
+                                <div class="mt-2 text-center bg-slate-50 p-2 rounded text-slate-800 font-mono text-sm border border-slate-100">
+                                    T(°C) = 1390 / (log₁₀(Na/K) + 1.75) - 273.15
+                                </div>
+                                <p class="text-xs text-right mt-1 text-slate-400">Giggenbach (1988)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CALCULADORA -->
+            <div id="view-calculator" class="flex flex-col gap-4 fade-in slide-in-bottom p-2 md:p-4">
+                
+                <!-- Selector de Modo -->
+                <div class="flex bg-slate-100 p-1 rounded-lg w-full max-w-sm mx-auto mb-2 mt-2">
+                    <button id="btn-mode-single" class="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all bg-white text-slate-900 shadow-sm">
+                        <i data-lucide="calculator" class="w-4 h-4"></i> Individual
+                    </button>
+                    <button id="btn-mode-batch" class="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all text-slate-600 hover:text-slate-900">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Archivo por Lote
+                    </button>
+                </div>
+
+                <!-- Modo Individual -->
+                <div id="mode-single" class="grid lg:grid-cols-12 min-h-[500px] border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                    <!-- Panel de Entradas -->
+                    <div class="lg:col-span-5 bg-slate-50 p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-slate-200">
+                        <h2 class="text-lg font-bold text-slate-800 mb-6">Datos de Laboratorio</h2>
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Concentración de Sílice (SiO₂)</label>
+                                <div class="relative">
+                                    <input type="number" id="input-sio2" min="0" step="any" placeholder="Ej. 300" class="w-full pl-4 pr-16 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all">
+                                    <span class="absolute right-4 top-3.5 text-slate-400 text-sm font-medium">mg/L</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Concentración de Sodio (Na)</label>
+                                <div class="relative">
+                                    <input type="number" id="input-na" min="0" step="any" placeholder="Ej. 1200" class="w-full pl-4 pr-16 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all">
+                                    <span class="absolute right-4 top-3.5 text-slate-400 text-sm font-medium">mg/L</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Concentración de Potasio (K)</label>
+                                <div class="relative">
+                                    <input type="number" id="input-k" min="0" step="any" placeholder="Ej. 150" class="w-full pl-4 pr-16 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all">
+                                    <span class="absolute right-4 top-3.5 text-slate-400 text-sm font-medium">mg/L</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-8 bg-blue-50 text-blue-800 p-4 rounded-lg flex gap-3 border border-blue-100">
+                            <i data-lucide="alert-circle" class="shrink-0 mt-0.5 w-4 h-4"></i>
+                            <p class="text-xs leading-relaxed">
+                                Asegúrese de ingresar las concentraciones elementales en <strong>miligramos por litro (mg/L)</strong> o partes por millón (ppm). Los resultados se calculan automáticamente.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Panel de Resultados -->
+                    <div class="lg:col-span-7 p-6 md:p-8 bg-white">
+                        <h2 class="text-lg font-bold text-slate-800 mb-6">Temperaturas Estimadas del Yacimiento</h2>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <!-- Cuarzo Conductivo -->
+                            <div id="card-q-cond" class="p-5 rounded-xl border-2 transition-colors bg-gray-100 text-gray-500 border-gray-200">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-semibold text-sm">Cuarzo (Conductivo)</h3>
+                                    <i data-lucide="droplets" class="opacity-50 w-4 h-4"></i>
+                                </div>
+                                <div id="out-q-cond" class="text-3xl font-bold tracking-tight mb-1">--</div>
+                                <p class="text-xs opacity-75 font-medium">Fournier (1977) - Sin pérdida</p>
+                            </div>
+
+                            <!-- Cuarzo Adiabático -->
+                            <div id="card-q-adiab" class="p-5 rounded-xl border-2 transition-colors bg-gray-100 text-gray-500 border-gray-200">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-semibold text-sm">Cuarzo (Adiabático)</h3>
+                                    <i data-lucide="droplets" class="opacity-50 w-4 h-4"></i>
+                                </div>
+                                <div id="out-q-adiab" class="text-3xl font-bold tracking-tight mb-1">--</div>
+                                <p class="text-xs opacity-75 font-medium">Fournier (1977) - Máx. pérdida</p>
+                            </div>
+
+                            <!-- Na/K Fournier -->
+                            <div id="card-nak-f" class="p-5 rounded-xl border-2 transition-colors bg-gray-100 text-gray-500 border-gray-200">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-semibold text-sm">Na / K (Fournier)</h3>
+                                    <i data-lucide="flame" class="opacity-50 w-4 h-4"></i>
+                                </div>
+                                <div id="out-nak-f" class="text-3xl font-bold tracking-tight mb-1">--</div>
+                                <p class="text-xs opacity-75 font-medium">Fournier (1979)</p>
+                            </div>
+
+                            <!-- Na/K Giggenbach -->
+                            <div id="card-nak-g" class="p-5 rounded-xl border-2 transition-colors bg-gray-100 text-gray-500 border-gray-200">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-semibold text-sm">Na / K (Giggenbach)</h3>
+                                    <i data-lucide="flame" class="opacity-50 w-4 h-4"></i>
+                                </div>
+                                <div id="out-nak-g" class="text-3xl font-bold tracking-tight mb-1">--</div>
+                                <p class="text-xs opacity-75 font-medium">Giggenbach (1988)</p>
+                            </div>
+                        </div>
+
+                        <!-- Leyenda Visual -->
+                        <div class="mt-8 pt-6 border-t border-slate-100">
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Guía de Entalpía</p>
+                            <div class="flex flex-wrap gap-3">
+                                <div class="flex items-center gap-1.5 text-xs text-slate-600">
+                                    <div class="w-3 h-3 rounded-full bg-gray-100 border border-gray-300"></div> Sin datos
+                                </div>
+                                <div class="flex items-center gap-1.5 text-xs text-slate-600">
+                                    <div class="w-3 h-3 rounded-full bg-blue-100 border border-blue-300"></div> &lt; 100 °C (Baja)
+                                </div>
+                                <div class="flex items-center gap-1.5 text-xs text-slate-600">
+                                    <div class="w-3 h-3 rounded-full bg-yellow-100 border border-yellow-300"></div> 100 - 200 °C (Media)
+                                </div>
+                                <div class="flex items-center gap-1.5 text-xs text-slate-600">
+                                    <div class="w-3 h-3 rounded-full bg-orange-100 border border-orange-300"></div> &gt; 200 °C (Alta)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modo Lote (CSV) -->
+                <div id="mode-batch" class="hidden bg-white border border-slate-200 rounded-xl p-6 shadow-sm min-h-[500px]">
+                    <div class="flex flex-col items-center justify-center space-y-4 mb-8">
+                        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center">
+                            <i data-lucide="upload" class="w-8 h-8"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-slate-800">Cargar múltiples muestras</h2>
+                        <p class="text-slate-500 text-sm max-w-xl text-center">
+                            Sube un archivo <strong>.csv</strong>. El sistema buscará automáticamente las columnas llamadas: <strong>Muestra, SiO2, Na y K</strong> e ignorará las filas con unidades.
+                        </p>
+                        
+                        <label class="cursor-pointer bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 mt-2">
+                            <i data-lucide="upload" class="w-4 h-4"></i>
+                            Seleccionar archivo CSV
+                            <input type="file" id="file-upload" accept=".csv" class="hidden">
+                        </label>
+                        
+                        <div id="upload-error" class="hidden mt-4 flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-lg text-sm font-medium border border-red-100">
+                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                            <span id="upload-error-text">Error</span>
+                        </div>
+                    </div>
+
+                    <div id="batch-results-container" class="hidden overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200 whitespace-nowrap">
+                                <tr>
+                                    <th class="px-4 py-3">Muestra</th>
+                                    <th class="px-4 py-3">SiO₂</th>
+                                    <th class="px-4 py-3">Na</th>
+                                    <th class="px-4 py-3">K</th>
+                                    <th class="px-4 py-3 bg-cyan-50/50 border-l border-slate-200 text-center">T. Cuarzo (Cond)</th>
+                                    <th class="px-4 py-3 bg-cyan-50/50 text-center">T. Cuarzo (Adiab)</th>
+                                    <th class="px-4 py-3 bg-orange-50/50 border-l border-slate-200 text-center">T. Na/K (F)</th>
+                                    <th class="px-4 py-3 bg-orange-50/50 text-center">T. Na/K (G)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="batch-tbody" class="divide-y divide-slate-100">
+                                <!-- Filas generadas por JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+        
+        <footer class="text-center text-slate-400 text-xs py-4">
+            Diseñado para la enseñanza y cálculo de geoquímica de fluidos geotérmicos.
+        </footer>
+    </div>
+
+    <!-- Script principal de lógica -->
+    <script>
+        // Inicializar iconos
+        lucide.createIcons();
+
+        // ------------------
+        // NAVEGACIÓN Y TABS
+        // ------------------
+        const tabTheory = document.getElementById('tab-theory');
+        const tabCalc = document.getElementById('tab-calculator');
+        const viewTheory = document.getElementById('view-theory');
+        const viewCalc = document.getElementById('view-calculator');
+
+        const btnModeSingle = document.getElementById('btn-mode-single');
+        const btnModeBatch = document.getElementById('btn-mode-batch');
+        const modeSingle = document.getElementById('mode-single');
+        const modeBatch = document.getElementById('mode-batch');
+
+        // Clases de estilo para botones activos/inactivos
+        const btnActiveClasses = ['bg-white', 'text-slate-900', 'shadow-sm'];
+        const btnInactiveClasses = ['text-slate-600', 'hover:text-slate-900'];
+
+        function setBtnActive(btnToActive, btnToInactive) {
+            btnToActive.classList.add(...btnActiveClasses);
+            btnToActive.classList.remove(...btnInactiveClasses);
+            btnToInactive.classList.add(...btnInactiveClasses);
+            btnToInactive.classList.remove(...btnActiveClasses);
+        }
+
+        // Eventos Tabs Principales
+        tabTheory.addEventListener('click', () => {
+            setBtnActive(tabTheory, tabCalc);
+            viewTheory.classList.remove('hidden');
+            viewCalc.classList.add('hidden');
+        });
+
+        tabCalc.addEventListener('click', () => {
+            setBtnActive(tabCalc, tabTheory);
+            viewCalc.classList.remove('hidden');
+            viewTheory.classList.add('hidden');
+        });
+
+        // Eventos Modos Calculadora
+        btnModeSingle.addEventListener('click', () => {
+            setBtnActive(btnModeSingle, btnModeBatch);
+            modeSingle.classList.remove('hidden');
+            modeSingle.classList.add('grid');
+            modeBatch.classList.add('hidden');
+        });
+
+        btnModeBatch.addEventListener('click', () => {
+            setBtnActive(btnModeBatch, btnModeSingle);
+            modeBatch.classList.remove('hidden');
+            modeSingle.classList.add('hidden');
+            modeSingle.classList.remove('grid');
+        });
+
+
+        // ------------------
+        // LÓGICA DE CÁLCULO
+        // ------------------
+        function calculateTemps(valSio2, valNa, valK) {
+            let res = { quartzNoSteam: null, quartzMaxSteam: null, nakFournier: null, nakGiggenbach: null };
+            
+            if (valSio2 > 0) {
+                const logSio2 = Math.log10(valSio2);
+                res.quartzNoSteam = (1309 / (5.19 - logSio2)) - 273.15;
+                res.quartzMaxSteam = (1522 / (5.75 - logSio2)) - 273.15;
+            }
+            if (valNa > 0 && valK > 0) {
+                const logNaK = Math.log10(valNa / valK);
+                res.nakFournier = (1217 / (logNaK + 1.483)) - 273.15;
+                res.nakGiggenbach = (1390 / (logNaK + 1.75)) - 273.15;
+            }
+            return res;
+        }
+
+        function getTemperatureColorClasses(temp) {
+            if (temp === null || isNaN(temp)) return 'bg-gray-100 text-gray-500 border-gray-200';
+            if (temp < 100) return 'bg-blue-50 text-blue-700 border-blue-200'; // Baja
+            if (temp >= 100 && temp < 200) return 'bg-yellow-50 text-yellow-700 border-yellow-200'; // Media
+            if (temp >= 200 && temp <= 350) return 'bg-orange-50 text-orange-700 border-orange-200'; // Alta
+            return 'bg-red-50 text-red-700 border-red-200'; // Muy alta / error
+        }
+
+        function formatTemp(temp) {
+            if (temp === null || isNaN(temp)) return '--';
+            if (temp < -50 || temp > 500) return 'Fuera de rango';
+            return `${temp.toFixed(1)} °C`;
+        }
+
+        function getTextClassFromColorClass(colorClassString) {
+            const parts = colorClassString.split(' ');
+            const textClass = parts.find(p => p.startsWith('text-'));
+            return textClass || 'text-slate-700';
+        }
+
+
+        // ------------------
+        // MODO INDIVIDUAL
+        // ------------------
+        const inputSio2 = document.getElementById('input-sio2');
+        const inputNa = document.getElementById('input-na');
+        const inputK = document.getElementById('input-k');
+
+        const outQCond = document.getElementById('out-q-cond');
+        const outQAdiab = document.getElementById('out-q-adiab');
+        const outNakF = document.getElementById('out-nak-f');
+        const outNakG = document.getElementById('out-nak-g');
+
+        const cardQCond = document.getElementById('card-q-cond');
+        const cardQAdiab = document.getElementById('card-q-adiab');
+        const cardNakF = document.getElementById('card-nak-f');
+        const cardNakG = document.getElementById('card-nak-g');
+
+        function updateSingleMode() {
+            const valSio2 = parseFloat(inputSio2.value);
+            const valNa = parseFloat(inputNa.value);
+            const valK = parseFloat(inputK.value);
+
+            const res = calculateTemps(valSio2, valNa, valK);
+
+            // Actualizar Textos
+            outQCond.innerText = formatTemp(res.quartzNoSteam);
+            outQAdiab.innerText = formatTemp(res.quartzMaxSteam);
+            outNakF.innerText = formatTemp(res.nakFournier);
+            outNakG.innerText = formatTemp(res.nakGiggenbach);
+
+            // Actualizar Colores de Tarjetas
+            cardQCond.className = "p-5 rounded-xl border-2 transition-colors " + getTemperatureColorClasses(res.quartzNoSteam);
+            cardQAdiab.className = "p-5 rounded-xl border-2 transition-colors " + getTemperatureColorClasses(res.quartzMaxSteam);
+            cardNakF.className = "p-5 rounded-xl border-2 transition-colors " + getTemperatureColorClasses(res.nakFournier);
+            cardNakG.className = "p-5 rounded-xl border-2 transition-colors " + getTemperatureColorClasses(res.nakGiggenbach);
+        }
+
+        inputSio2.addEventListener('input', updateSingleMode);
+        inputNa.addEventListener('input', updateSingleMode);
+        inputK.addEventListener('input', updateSingleMode);
+
+
+        // ------------------
+        // MODO LOTE (CSV)
+        // ------------------
+        const fileUpload = document.getElementById('file-upload');
+        const uploadError = document.getElementById('upload-error');
+        const uploadErrorText = document.getElementById('upload-error-text');
+        const batchResultsContainer = document.getElementById('batch-results-container');
+        const batchTbody = document.getElementById('batch-tbody');
+
+        fileUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            uploadError.classList.add('hidden');
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                try {
+                    const text = event.target.result;
+                    const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+
+                    // Función para separar CSV considerando comillas
+                    const splitCSV = (line) => {
+                        const result = [];
+                        let current = '';
+                        let inQuotes = false;
+                        for (let i = 0; i < line.length; i++) {
+                            const char = line[i];
+                            if (char === '"') inQuotes = !inQuotes;
+                            else if (char === ',' && !inQuotes) { result.push(current); current = ''; }
+                            else current += char;
+                        }
+                        result.push(current);
+                        return result.map(c => c.trim());
+                    };
+
+                    let headerRowIndex = -1;
+                    let cols = { muestra: -1, sio2: -1, na: -1, k: -1 };
+
+                    // Buscar fila de cabeceras
+                    for (let i = 0; i < lines.length; i++) {
+                        const cells = splitCSV(lines[i]).map(c => c.toLowerCase());
+                        if (cells.includes('muestra') && cells.includes('sio2')) {
+                            headerRowIndex = i;
+                            cols.muestra = cells.indexOf('muestra');
+                            cols.sio2 = cells.indexOf('sio2');
+                            cols.na = cells.indexOf('na');
+                            cols.k = cells.indexOf('k');
+                            break;
+                        }
+                    }
+
+                    if (headerRowIndex === -1) {
+                        showUploadError("No se encontraron las columnas clave (Muestra, SiO2, Na, K). Verifica tu archivo.");
+                        return;
+                    }
+
+                    const parsedResults = [];
+                    for (let i = headerRowIndex + 1; i < lines.length; i++) {
+                        const cells = splitCSV(lines[i]);
+                        if (cells.length <= Math.max(cols.sio2, cols.na, cols.k)) continue;
+
+                        const muestra = cells[cols.muestra];
+                        
+                        // Limpiar string de número
+                        const cleanNum = (str) => parseFloat((str || '0').replace(/</g, '').replace(/,/g, '.').replace(/"/g, ''));
+                        
+                        const valSio2 = cleanNum(cells[cols.sio2]);
+                        const valNa = cleanNum(cells[cols.na]);
+                        const valK = cleanNum(cells[cols.k]);
+
+                        // Ignorar filas inválidas (como la de unidades)
+                        if (isNaN(valSio2) && isNaN(valNa)) continue;
+                        if (valSio2 === 0 && valNa === 0 && valK === 0) continue;
+
+                        parsedResults.push({
+                            muestra,
+                            sio2: valSio2,
+                            na: valNa,
+                            k: valK,
+                            temps: calculateTemps(valSio2, valNa, valK)
+                        });
+                    }
+
+                    renderBatchTable(parsedResults);
+
+                } catch (err) {
+                    showUploadError("Error al leer el archivo. Sube un archivo CSV válido.");
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset input file to allow uploading same file again if needed
+            e.target.value = ''; 
+        });
+
+        function showUploadError(msg) {
+            uploadErrorText.innerText = msg;
+            uploadError.classList.remove('hidden');
+            batchResultsContainer.classList.add('hidden');
+        }
+
+        function renderBatchTable(data) {
+            if (data.length === 0) {
+                showUploadError("No se encontraron datos numéricos válidos en el archivo.");
+                return;
+            }
+
+            batchResultsContainer.classList.remove('hidden');
+            batchTbody.innerHTML = ''; // Clear table
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition-colors";
+
+                // Text colors
+                const tQCondClass = getTextClassFromColorClass(getTemperatureColorClasses(row.temps.quartzNoSteam));
+                const tQAdiaClass = getTextClassFromColorClass(getTemperatureColorClasses(row.temps.quartzMaxSteam));
+                const tNakFClass = getTextClassFromColorClass(getTemperatureColorClasses(row.temps.nakFournier));
+                const tNakGClass = getTextClassFromColorClass(getTemperatureColorClasses(row.temps.nakGiggenbach));
+
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-medium text-slate-900">${row.muestra}</td>
+                    <td class="px-4 py-3 text-slate-600">${row.sio2}</td>
+                    <td class="px-4 py-3 text-slate-600">${row.na}</td>
+                    <td class="px-4 py-3 text-slate-600">${row.k}</td>
+                    
+                    <td class="px-4 py-3 font-semibold border-l border-slate-100 text-center ${tQCondClass}">
+                        ${formatTemp(row.temps.quartzNoSteam)}
+                    </td>
+                    <td class="px-4 py-3 font-semibold text-center ${tQAdiaClass}">
+                        ${formatTemp(row.temps.quartzMaxSteam)}
+                    </td>
+                    <td class="px-4 py-3 font-semibold border-l border-slate-100 text-center ${tNakFClass}">
+                        ${formatTemp(row.temps.nakFournier)}
+                    </td>
+                    <td class="px-4 py-3 font-semibold text-center ${tNakGClass}">
+                        ${formatTemp(row.temps.nakGiggenbach)}
+                    </td>
+                `;
+                batchTbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>
