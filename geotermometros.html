@@ -251,10 +251,10 @@
                         </div>
                         <h2 class="text-xl font-bold text-slate-800">Cargar múltiples muestras</h2>
                         <p class="text-slate-500 text-sm max-w-xl text-center">
-                            Sube un archivo <strong>.csv</strong>. El sistema buscará automáticamente las columnas llamadas: <strong>Muestra, SiO2, Na y K</strong> e ignorará las filas con unidades.
+                            Sube un archivo <strong>.csv</strong>. El sistema buscará automáticamente las columnas <strong>Muestra, SiO2, Na, K</strong> y opcionalmente <strong>Condition</strong>.
                         </p>
                         
-                        <label class="cursor-pointer bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 mt-2">
+                        <label class="cursor-pointer bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 mt-2 shadow-sm">
                             <i data-lucide="upload" class="w-4 h-4"></i>
                             Seleccionar archivo CSV
                             <input type="file" id="file-upload" accept=".csv" class="hidden">
@@ -266,6 +266,13 @@
                         </div>
                     </div>
 
+                    <!-- Header de Acciones de Lote (Botón Descargar) -->
+                    <div id="batch-actions" class="hidden flex justify-end mb-4 border-t border-slate-100 pt-4">
+                        <button id="btn-download-csv" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
+                            <i data-lucide="download" class="w-4 h-4"></i> Descargar Resultados (CSV)
+                        </button>
+                    </div>
+
                     <div id="batch-results-container" class="hidden overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
                         <table class="w-full text-sm text-left">
                             <thead class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200 whitespace-nowrap">
@@ -274,6 +281,7 @@
                                     <th class="px-4 py-3">SiO₂</th>
                                     <th class="px-4 py-3">Na</th>
                                     <th class="px-4 py-3">K</th>
+                                    <th class="px-4 py-3">Condition</th>
                                     <th class="px-4 py-3 bg-cyan-50/50 border-l border-slate-200 text-center">T. Cuarzo (Cond)</th>
                                     <th class="px-4 py-3 bg-cyan-50/50 text-center">T. Cuarzo (Adiab)</th>
                                     <th class="px-4 py-3 bg-orange-50/50 border-l border-slate-200 text-center">T. Na/K (F)</th>
@@ -299,6 +307,9 @@
     <script>
         // Inicializar iconos
         lucide.createIcons();
+
+        // Variable global para almacenar datos procesados y exportarlos
+        let currentBatchData = [];
 
         // ------------------
         // NAVEGACIÓN Y TABS
@@ -443,6 +454,8 @@
         const uploadErrorText = document.getElementById('upload-error-text');
         const batchResultsContainer = document.getElementById('batch-results-container');
         const batchTbody = document.getElementById('batch-tbody');
+        const batchActions = document.getElementById('batch-actions');
+        const btnDownloadCsv = document.getElementById('btn-download-csv');
 
         fileUpload.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -472,7 +485,8 @@
                     };
 
                     let headerRowIndex = -1;
-                    let cols = { muestra: -1, sio2: -1, na: -1, k: -1 };
+                    // Agregar condition a los indices
+                    let cols = { muestra: -1, sio2: -1, na: -1, k: -1, condition: -1 };
 
                     // Buscar fila de cabeceras
                     for (let i = 0; i < lines.length; i++) {
@@ -483,6 +497,11 @@
                             cols.sio2 = cells.indexOf('sio2');
                             cols.na = cells.indexOf('na');
                             cols.k = cells.indexOf('k');
+                            
+                            // Buscar Condition (opcional, previendo variaciones de idioma)
+                            cols.condition = cells.indexOf('condition');
+                            if(cols.condition === -1) cols.condition = cells.indexOf('condición');
+                            
                             break;
                         }
                     }
@@ -498,6 +517,8 @@
                         if (cells.length <= Math.max(cols.sio2, cols.na, cols.k)) continue;
 
                         const muestra = cells[cols.muestra];
+                        // Leer condición si la columna existe, sino blanco
+                        const condition = cols.condition !== -1 && cells[cols.condition] ? cells[cols.condition] : '';
                         
                         // Limpiar string de número
                         const cleanNum = (str) => parseFloat((str || '0').replace(/</g, '').replace(/,/g, '.').replace(/"/g, ''));
@@ -515,6 +536,7 @@
                             sio2: valSio2,
                             na: valNa,
                             k: valK,
+                            condition: condition,
                             temps: calculateTemps(valSio2, valNa, valK)
                         });
                     }
@@ -535,6 +557,8 @@
             uploadErrorText.innerText = msg;
             uploadError.classList.remove('hidden');
             batchResultsContainer.classList.add('hidden');
+            batchActions.classList.add('hidden');
+            currentBatchData = [];
         }
 
         function renderBatchTable(data) {
@@ -543,7 +567,11 @@
                 return;
             }
 
+            // Guardar para exportación
+            currentBatchData = data;
+
             batchResultsContainer.classList.remove('hidden');
+            batchActions.classList.remove('hidden');
             batchTbody.innerHTML = ''; // Clear table
 
             data.forEach(row => {
@@ -561,6 +589,7 @@
                     <td class="px-4 py-3 text-slate-600">${row.sio2}</td>
                     <td class="px-4 py-3 text-slate-600">${row.na}</td>
                     <td class="px-4 py-3 text-slate-600">${row.k}</td>
+                    <td class="px-4 py-3 text-slate-500 italic text-xs">${row.condition || '-'}</td>
                     
                     <td class="px-4 py-3 font-semibold border-l border-slate-100 text-center ${tQCondClass}">
                         ${formatTemp(row.temps.quartzNoSteam)}
@@ -578,6 +607,48 @@
                 batchTbody.appendChild(tr);
             });
         }
+
+        // Descargar funcionalidad CSV
+        btnDownloadCsv.addEventListener('click', () => {
+            if (!currentBatchData || currentBatchData.length === 0) return;
+
+            // Construir encabezado
+            let csvContent = "Muestra,SiO2(mg/L),Na(mg/L),K(mg/L),Condition,T_Cuarzo_Conductivo(C),T_Cuarzo_Adiabatico(C),T_NaK_Fournier(C),T_NaK_Giggenbach(C)\n";
+
+            // Helper para limpiar las temperaturas (dejar en blanco si no aplica)
+            const getTempStr = (temp) => (temp === null || isNaN(temp)) ? '' : temp.toFixed(1);
+
+            currentBatchData.forEach(row => {
+                // Escapar la condición en caso de que contenga comas
+                let safeCondition = row.condition || '';
+                if(safeCondition.includes(',')) safeCondition = `"${safeCondition}"`;
+
+                const rowData = [
+                    row.muestra,
+                    row.sio2,
+                    row.na,
+                    row.k,
+                    safeCondition,
+                    getTempStr(row.temps.quartzNoSteam),
+                    getTempStr(row.temps.quartzMaxSteam),
+                    getTempStr(row.temps.nakFournier),
+                    getTempStr(row.temps.nakGiggenbach)
+                ];
+
+                csvContent += rowData.join(',') + "\n";
+            });
+
+            // Crear el blob y forzar la descarga
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Resultados_Geotermometros.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
     </script>
 </body>
 </html>
